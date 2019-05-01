@@ -13,9 +13,20 @@ parseMessage s = case words s of
 parse :: String -> [LogMessage]
 parse file = map parseMessage (lines file)
 
-{--insert :: LogMessage -> MessageTree -> MessageTree
-insert message (Node l m r)
-      | (LogMessage _ ts _) > (getTimeStamp m) = Leaf--}
+insert :: LogMessage -> MessageTree -> MessageTree
+insert newmsg Leaf = Node Leaf newmsg Leaf
+insert newmsg (Node left oldmsg right)
+      | time newmsg > time oldmsg = Node left oldmsg (insert newmsg right)
+      | otherwise                 = Node (insert newmsg left) oldmsg right
+insert (Unknown _) tree = tree
 
-getTimeStamp :: LogMessage -> Int
-getTimeStamp (LogMessage _ ts _) = ts
+{--timestamp :: LogMessage -> Maybe TimeStamp
+timestamp (Unknown _)        = Nothing
+timestamp (LogMessage t _ _) = case t of
+  (Error _) -> Just time
+  Info      -> Just time
+  Warning   -> Just time--}
+
+time :: LogMessage -> TimeStamp
+time (LogMessage _ ts _)         = ts
+time (LogMessage (Error _) ts _) = ts
