@@ -20,13 +20,16 @@ insert newmsg (Node left oldmsg right)
       | otherwise                 = Node (insert newmsg left) oldmsg right
 insert (Unknown _) tree = tree
 
+time :: LogMessage -> TimeStamp
+time (LogMessage _ ts _)         = ts
+time (LogMessage (Error _) ts _) = ts
+
+build :: [LogMessage] -> MessageTree
+build []   = Leaf
+build logs = map (\l -> insert l Leaf) logs
 {--timestamp :: LogMessage -> Maybe TimeStamp
 timestamp (Unknown _)        = Nothing
 timestamp (LogMessage t _ _) = case t of
   (Error _) -> Just time
   Info      -> Just time
   Warning   -> Just time--}
-
-time :: LogMessage -> TimeStamp
-time (LogMessage _ ts _)         = ts
-time (LogMessage (Error _) ts _) = ts
