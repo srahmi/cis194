@@ -25,8 +25,8 @@ time (LogMessage _ ts _)         = ts
 time (LogMessage (Error _) ts _) = ts
 
 build :: [LogMessage] -> MessageTree
-build []   = Leaf
-build logs = map (\l -> insert l Leaf) logs
+build [] = Leaf
+build    = foldr insert Leaf
 {--timestamp :: LogMessage -> Maybe TimeStamp
 timestamp (Unknown _)        = Nothing
 timestamp (LogMessage t _ _) = case t of
