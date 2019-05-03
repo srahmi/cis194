@@ -25,11 +25,30 @@ time (LogMessage _ ts _)         = ts
 time (LogMessage (Error _) ts _) = ts
 
 build :: [LogMessage] -> MessageTree
-build [] = Leaf
-build    = foldr insert Leaf
-{--timestamp :: LogMessage -> Maybe TimeStamp
-timestamp (Unknown _)        = Nothing
-timestamp (LogMessage t _ _) = case t of
-  (Error _) -> Just time
-  Info      -> Just time
-  Warning   -> Just time--}
+build []   = Leaf
+build logs = foldr insert Leaf logs
+
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf                  = []
+inOrder (Node left msg right) = inOrder left ++ (msg : inOrder right)
+
+whatWentWrong :: [LogMessage] -> [String]
+whatWentWrong = map message . filter (severe 50) . inOrder . build
+
+message :: LogMessage -> String
+message (Unknown _)          = []
+message (LogMessage _ _ msg) = msg
+
+severe :: Int -> LogMessage -> Bool
+severe minLvl (Unknown _)            = False
+severe minLvl (LogMessage mType _ _) = case mType of
+                                            (Error lvl) -> lvl > minLvl
+                                            otherwise   -> False
+
+
+{--severe minLvl (LogMessage Info _ _)    = False
+severe minLvl (LogMessage Warning _ _) = False
+severe minLvl (Unknown _)              = False
+severe minLvl (LogMessage (Error lvl) _ _)
+    | lvl > minLvl = True
+    | otherwise    = False--}
