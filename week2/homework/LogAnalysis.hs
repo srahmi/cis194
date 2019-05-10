@@ -10,7 +10,7 @@ parseMessage s = case words s of
   ("W":ts:msg)     -> LogMessage Warning (read ts :: Int) (unwords msg)
   _                -> Unknown s
 
-parse :: String -> [LogMessage]
+parse      :: String -> [LogMessage]
 parse file = map parseMessage (lines file)
 
 insert :: LogMessage -> MessageTree -> MessageTree
@@ -20,26 +20,26 @@ insert newmsg (Node left oldmsg right)
       | otherwise                 = Node (insert newmsg left) oldmsg right
 insert (Unknown _) tree = tree
 
-time :: LogMessage -> TimeStamp
+time                             :: LogMessage -> TimeStamp
 time (LogMessage _ ts _)         = ts
 time (LogMessage (Error _) ts _) = ts
 
-build :: [LogMessage] -> MessageTree
+build      :: [LogMessage] -> MessageTree
 build []   = Leaf
 build logs = foldr insert Leaf logs
 
-inOrder :: MessageTree -> [LogMessage]
+inOrder                       :: MessageTree -> [LogMessage]
 inOrder Leaf                  = []
 inOrder (Node left msg right) = inOrder left ++ (msg : inOrder right)
 
 whatWentWrong :: [LogMessage] -> [String]
 whatWentWrong = map message . filter (severe 50) . inOrder . build
 
-message :: LogMessage -> String
+message                      :: LogMessage -> String
 message (Unknown _)          = []
 message (LogMessage _ _ msg) = msg
 
-severe :: Int -> LogMessage -> Bool
+severe                               :: Int -> LogMessage -> Bool
 severe minLvl (Unknown _)            = False
 severe minLvl (LogMessage mType _ _) = case mType of
                                             (Error lvl) -> lvl > minLvl
