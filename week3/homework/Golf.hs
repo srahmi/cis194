@@ -2,6 +2,11 @@ module Golf
     (
     ) where
 
+import Data.List (group, sort)
+import Control.Monad (join)
+import qualified Data.Map as M
+import Control.Arrow (second)
+
 skips    :: [a] -> [[a]]
 skips [] = []
 skips xs = filter (not . null) $ map (`every` xs) index
@@ -21,10 +26,20 @@ localMaxima xs = case xs of
     else localMaxima (y:z:ys)
   otherwise -> []
 
-localMaxima'            :: [Integer] -> [Integer]
-localMaxima' []         = []
-localMaxima' [_]        = []
-localMaxima' [_, _]     = []
-localMaxima' (x:y:z:ys)
-     | y > x && y > z = y : localMaxima' (y:z:ys)
-     | otherwise      = localMaxima' (y:z:ys)
+histogram :: [Integer] -> String
+histogram = addAxis . print' . line . join . map (zip [1..]) . group . sort
+
+line :: [(Integer, Integer)] -> [(Integer, [Integer])]
+line = reverse
+       . map (second sort)
+       . M.toList
+       . M.fromListWith (++)
+       . map(\(x, y) -> (x, [y]))
+
+print'              :: [(Integer, [Integer])] -> String
+print' []           = []
+print' ((_, xs):ys) = map(\i -> if i `elem` xs then '*' else ' ') [0..9]
+                         ++ "\n" ++ print' ys
+
+addAxis :: String -> String
+addAxis s = s ++ "==========\n0123456789\n"
