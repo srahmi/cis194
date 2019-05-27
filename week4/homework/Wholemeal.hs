@@ -50,7 +50,7 @@ height Leaf           = 0
 height (Node h _ _ _) = h
 
 map' :: (a -> b) -> [a] -> [b]
-map' f = foldr ((:) . f) []
+map' f = foldr (\x acc -> f x : acc) []
 
 xor    :: [Bool] -> Bool
 xor   = foldr (\x acc -> (x && not acc) || (not x && acc)) False
