@@ -70,7 +70,7 @@ cartProd xs ys = [(x,y) | x <- xs, y <- ys]
 sieveSundaram'   :: Int -> [Int]
 sieveSundaram' n = filter (<= (2 * n + 2))
                    . map (\x -> x * 2 + 1)
-                   $ ([1..n] \\ setToRemove' [1..n-1][1..n])
+                   $ ([1..n] \\ nonPrimes [1..n-1][1..n])
 
-setToRemove'       :: [Int] -> [Int] -> [Int]
-setToRemove' xs ys = nub [i+j+2*i*j | i <- xs, j <- ys, i+j+2*i*j <= length ys]
+nonPrimes       :: [Int] -> [Int] -> [Int]
+nonPrimes xs ys = nub [i+j+2*i*j | i <- xs, j <- ys, i+j+2*i*j <= length ys]
