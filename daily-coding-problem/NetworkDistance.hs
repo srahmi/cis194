@@ -41,16 +41,16 @@ type Node = String
 type Vertex = String
 type Graph = [(Node, [Edge])]
 
-buildGraph    :: [(Node, Node, Int)] -> Graph
-buildGraph  = graph
-              .M.fromListWith (++)
-              . map(\(s, d, w) -> (s, [(d, w)]))
+buildGraph :: [(Node, Node, Int)] -> Graph
+buildGraph = graph
+             .M.fromListWith (++)
+             . map(\(s, d, w) -> (s, [(d, w)]))
 
 graph :: M.Map Node [(Node, Int)] -> Graph
-graph = map(second toEdges) . M.toList
+graph = map (second toEdges) . M.toList
 
 toEdges :: [(Node, Int)] -> [Edge]
 toEdges = map (\(e, w) -> Edge e (Just w))
 
-vertices  :: [(Node, Node, Int)] -> [Vertex]
-vertices  =  map(\(x, y, _) -> x ++ y)
+vertices :: [(Node, Node, Int)] -> [Vertex]
+vertices =  map(\(x, y, _) -> x ++ y)
