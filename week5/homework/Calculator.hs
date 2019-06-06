@@ -17,6 +17,8 @@ eval exprT = case exprT of
   (Mul expr (Lit y))  -> eval expr * y
   _                   -> 0
 
-
 evalStr :: String -> Maybe Integer
 evalStr = fmap eval . parseExp Lit Add Mul
+
+reify :: ExprT -> ExprT
+reify = id
