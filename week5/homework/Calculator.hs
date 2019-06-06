@@ -22,3 +22,7 @@ evalStr = fmap eval . parseExp Lit Add Mul
 
 reify :: ExprT -> ExprT
 reify = id
+
+
+testExp :: Expr a => Maybe a
+testExp = parseExp lit add mul "(3 * -4) + 5"
