@@ -32,3 +32,25 @@ instance Expr MinMax where
   lit a = MinMax (lit a)
   add   = max
   mul   = min
+
+instance Expr Mod7 where
+  lit a
+    | a >= 0 && a <= 6 = Mod7 (lit a)
+    | otherwise        = Mod7 0
+  add (Mod7 a) (Mod7 b) = Mod7 ((a + b) `mod` 7)
+  mul (Mod7 a) (Mod7 b) = Mod7 ((a * b) `mod` 7)
+
+class Numberish a where
+  fromNumber :: Integer -> a
+  toNumber :: a -> Integer
+
+newtype Age = Age Integer deriving(Eq,Show)
+newtype Year = Year Integer deriving(Eq,Show)
+
+instance Numberish Age where
+  fromNumber n = Age n
+  toNumber (Age n) = n
+
+instance Numberish Year where
+  fromNumber n = Year n
+  toNumber (Year n) = n
