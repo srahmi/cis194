@@ -1,4 +1,9 @@
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
+
 module ExprT where
+
+import StackVM
+
 
 class Expr a where
   lit :: Integer -> a
@@ -14,9 +19,9 @@ newtype MinMax = MinMax Integer deriving (Ord, Eq, Show)
 newtype Mod7 = Mod7 Integer deriving (Eq, Show)
 
 instance Expr ExprT where
-  lit a   = Lit a
-  add a b = Add a b
-  mul a b = Mul a b
+  lit a   = ExprT.Lit a
+  add a b = ExprT.Add a b
+  mul a b = ExprT.Mul a b
 
 instance Expr Integer where
   lit a   = a
@@ -39,6 +44,11 @@ instance Expr Mod7 where
     | otherwise        = Mod7 0
   add (Mod7 a) (Mod7 b) = Mod7 ((a + b) `mod` 7)
   mul (Mod7 a) (Mod7 b) = Mod7 ((a * b) `mod` 7)
+
+instance Expr Program where
+  lit a = [PushI a]
+  add a b = a ++ b ++ [StackVM.Add]
+  mul a b = a ++ b ++ [StackVM.Mul]
 
 class Numberish a where
   fromNumber :: Integer -> a
