@@ -4,11 +4,19 @@ module ExprT where
 
 import StackVM
 
-
 class Expr a where
   lit :: Integer -> a
   add :: a -> a -> a
   mul :: a -> a -> a
+
+class HasVars a where
+  var :: String -> a
+
+data VarExprT = VLit Integer
+           | VAdd VarExprT VarExprT
+           | VMul VarExprT VarExprT
+           | Var String
+  deriving (Show, Eq)
 
 data ExprT = Lit Integer
            | Add ExprT ExprT
@@ -18,10 +26,20 @@ data ExprT = Lit Integer
 newtype MinMax = MinMax Integer deriving (Ord, Eq, Show)
 newtype Mod7 = Mod7 Integer deriving (Eq, Show)
 
+instance HasVars VarExprT where
+  var name = Var name
+
+instance Expr VarExprT where
+  lit a = VLit a
+  add a b = VAdd a b
+  mul a b = VMul a b
+
 instance Expr ExprT where
   lit a   = ExprT.Lit a
   add a b = ExprT.Add a b
   mul a b = ExprT.Mul a b
+
+instance HasVars (M.Map String Integer -> Maybe Integer)
 
 instance Expr Integer where
   lit a   = a
@@ -34,9 +52,9 @@ instance Expr Bool where
   mul a b = a && b
 
 instance Expr MinMax where
-  lit a = MinMax (lit a)
-  add   = max
-  mul   = min
+  lit = MinMax
+  add = max
+  mul = min
 
 instance Expr Mod7 where
   lit a
