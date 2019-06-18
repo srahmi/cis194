@@ -2,6 +2,8 @@ module Fibonacci
     (
     ) where
 
+import Data.List (elemIndex)
+
 data Stream t = Cons t (Stream t)
 
 instance Show a => Show (Stream a)
@@ -40,7 +42,21 @@ streamFromSeed :: (a -> a) -> a -> Stream a
 streamFromSeed f s = streamMap f (streamRepeat s)
 
 nats :: Stream Integer
-nats = stream [0..]
+nats = streamFromSeed (+1) 1
+
+interLeaveStream :: Stream a -> Stream a -> Stream a
+interLeaveStream (Cons a xs) (Cons b ys) = Cons a (Cons b (interLeaveStream xs ys))
+
+interLeaveStream' :: Stream a -> Stream a -> Stream a
+interLeaveStream' (Cons a xs) ys = Cons a (interLeaveStream' ys xs)
 
 ruler :: Stream Integer
-ruler = stream [0..][]
+ruler = interLeaveStream xs ys where
+   xs = stream [0,0..]
+   ys = stream [1..]
+
+ruler' :: Stream Integer
+ruler' = startRuler 0
+
+startRuler :: Integer -> Stream Integer
+startRuler y = interLeaveStream (streamRepeat y) (startRuler (y + 1))
