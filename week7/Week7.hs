@@ -54,10 +54,10 @@ instance Semigroup All' where
   All' a <> All' b = All' (a && b)
 
 instance Monoid Any' where
-  mempty                              = Any' False
+  mempty = Any' False
 
 instance Monoid All' where
-  mempty                            = All' True
+  mempty = All' True
 
 
 leaf :: a -> Tree a
