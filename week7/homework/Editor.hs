@@ -36,7 +36,7 @@ commands = map show [View, Edit, Next, Prev, Quit]
 instance Applicative (Editor b) where
     pure = return
     (<*>) = ap
-    
+
 newtype Editor b a = Editor (StateT (b,Int) IO a)
   deriving (Functor, Monad, MonadIO, MonadState (b,Int))
 
