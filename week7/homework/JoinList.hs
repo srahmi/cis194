@@ -53,6 +53,29 @@ indexJ i (Append m jl1 jl2)
   | i < size' jl1 = indexJ i jl1
   | otherwise = indexJ (i-1) jl2
 
+dropJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
+dropJ 0 jl    = jl
+dropJ _ Empty = Empty
+dropJ i jl@(Single m _)
+  | i > getSize (size m) = jl
+  | otherwise            = Empty
+dropJ i jl@(Append m jl1 jl2) 
+  | i > getSize (size m) = Empty
+  | i < 0                = jl
+  | i < size' jl1        =  (+++) jl1 jl2
+  | otherwise            = dropJ (i-1) jl2
+
+takeJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
+takeJ 0 _     = Empty
+takeJ _ Empty = Empty
+takeJ i jl@(Single m _)
+  | i > getSize (size m) = jl
+  | otherwise            = Empty
+takeJ i jl@(Append m jl1 jl2)
+  | i >= getSize (size m) = jl
+  | i <= 0               = Empty
+  | otherwise            = (+++) jl1 $ takeJ (i-1) jl2
+
 size' :: (Sized m, Monoid m) => JoinList m a -> Int
 size' jl = getSize $ size (tag jl)
 
