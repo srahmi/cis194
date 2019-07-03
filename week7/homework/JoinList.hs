@@ -3,6 +3,8 @@
 module JoinList where
 
 import Sized
+import Scrabble
+
 {--
 Append (Product 210)
   (Append (Product 30)
@@ -36,12 +38,12 @@ jlToList Empty = []
 jlToList (Single _ a) = [a]
 jlToList (Append _ l1 l2) = jlToList l1 ++ jlToList l2
 
--- Append (Size 4) 
---  (Single (Size 1) 'y') 
---  (Append (Size 3) 
---    (Single (Size 1) 'e') 
---    (Append (Size 2) 
---      (Single (Size 1) 'a') 
+-- Append (Size 4)
+--  (Single (Size 1) 'y')
+--  (Append (Size 3)
+--    (Single (Size 1) 'e')
+--    (Append (Size 2)
+--      (Single (Size 1) 'a')
 --      (Single (Size 1) 'h')))
 indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
 indexJ _ Empty = Nothing
@@ -59,7 +61,7 @@ dropJ _ Empty = Empty
 dropJ i jl@(Single m _)
   | i > getSize (size m) = jl
   | otherwise            = Empty
-dropJ i jl@(Append m jl1 jl2) 
+dropJ i jl@(Append m jl1 jl2)
   | i > getSize (size m) = Empty
   | i < 0                = jl
   | i < size' jl1        =  (+++) jl1 jl2
@@ -78,6 +80,9 @@ takeJ i jl@(Append m jl1 jl2)
 
 size' :: (Sized m, Monoid m) => JoinList m a -> Int
 size' jl = getSize $ size (tag jl)
+
+scoreLine :: String -> JoinList Score String
+scoreLine line = Single (scoreString line) line
 
 az :: JoinList Size Char
 az = foldr1 (+++) $ Single (Size 1) <$> "yeah"

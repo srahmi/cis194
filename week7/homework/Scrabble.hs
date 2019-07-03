@@ -29,10 +29,13 @@ scoreTable =
 
 score :: Char -> Score
 score c
-  | c `elem` ['a'..'z'] = toScore  (find (\(c', _) -> c == c') scoreTable)
+  | c `elem` ['a'..'z'] = toScore $ find (\(c', _) -> c == c') scoreTable
   | otherwise = Score 0
 
 toScore :: Maybe (Char, Score) -> Score
 toScore a = case a of
   Just x -> snd x
   _      -> Score 0
+
+scoreString :: String -> Score
+scoreString =  mconcat . map score
