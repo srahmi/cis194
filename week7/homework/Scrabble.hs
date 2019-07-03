@@ -2,7 +2,6 @@
 module Scrabble where
 
 import Data.Semigroup
-import Data.Maybe
 import Data.List(find)
 
 newtype Score = Score Int
@@ -26,10 +25,12 @@ scoreTable =
   ('p', Score 3),('q', Score 10),('r', Score 1),
   ('s', Score 1),('t', Score 1),('u', Score 1),
   ('v', Score 4),('w', Score 4),('x', Score 8),
-  ('y', Score 4),('z', Score 10),(' ', Score 0)]
+  ('y', Score 4),('z', Score 10)]
 
 score :: Char -> Score
-score c =  toScore  (find (\(c', _) -> c == c') scoreTable)
+score c
+  | c `elem` ['a'..'z'] = toScore  (find (\(c', _) -> c == c') scoreTable)
+  | otherwise = Score 0
 
 toScore :: Maybe (Char, Score) -> Score
 toScore a = case a of
