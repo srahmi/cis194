@@ -1,9 +1,11 @@
-{-# OPTIONS_GHC -Wall #-}
+{-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
 
 module JoinList where
 
 import Sized
 import Scrabble
+import Buffer
+import Editor
 
 {--
 Append (Product 210)
@@ -86,3 +88,24 @@ scoreLine line = Single (scoreString line) line
 
 az :: JoinList Size Char
 az = foldr1 (+++) $ Single (Size 1) <$> "yeah"
+
+instance Buffer (JoinList (Score, Size) String) where
+  toString l = unlines (jlToList l)
+
+  fromString xs = foldr1 (+++) $ createLine <$> lines xs
+    where
+      createLine s = Single (scoreString s, Size 1) s
+
+  line = indexJ
+
+  replaceLine _ "" b = b
+  replaceLine n l b  = case indexJ n b of
+    Nothing -> b
+    Just _ -> takeJ n b +++ newline +++ dropJ (n + 1) b
+      where
+        newline = fromString l :: JoinList (Score, Size) String
+
+  numLines = getSize . size . tag
+  value    = getScore . fst . tag
+
+main = runEditor editor (fromString "test" :: (JoinList (Score, Size) String))

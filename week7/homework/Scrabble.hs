@@ -7,6 +7,8 @@ import Data.List(find)
 newtype Score = Score Int
   deriving (Eq, Ord, Show, Num)
 
+getScore :: Score -> Int
+getScore (Score i) = i
 
 instance Semigroup Score where
   Score a <> Score b = Score (a + b)
