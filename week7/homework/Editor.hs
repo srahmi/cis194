@@ -10,7 +10,7 @@ import Buffer
 import Control.Exception
 import Control.Monad.State
 
-import Control.Applicative
+import Control.Applicative()
 import Control.Arrow       (first, second)
 
 import Data.Char
@@ -95,7 +95,7 @@ doCommand :: Buffer b => Command -> Editor b ()
 doCommand View = do
   cur  <- getCurLine
   let ls = [(cur - 2) .. (cur + 2)]
-  ss <- mapM (\l -> onBuffer $ line l) ls
+  ss <- mapM (onBuffer . line) ls
   zipWithM_ (showL cur) ls ss
  where
   showL _ _ Nothing  = return ()

@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleInstances, TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module JoinList where
 
@@ -22,7 +22,7 @@ data JoinList m a = Empty
   deriving (Eq, Show)
 
 (+++) :: Monoid m => JoinList m a -> JoinList m a -> JoinList m a
-(+++) a b = Append (tag a `mappend` tag b) a b
+(+++) a b = Append (tag a <> tag b) a b
 
 tag :: Monoid m => JoinList m a -> m
 tag Empty          = mempty
@@ -77,8 +77,8 @@ takeJ i jl@(Single m _)
   | otherwise            = Empty
 takeJ i jl@(Append m jl1 jl2)
   | i >= getSize (size m) = jl
-  | i <= 0               = Empty
-  | otherwise            = (+++) jl1 $ takeJ (i-1) jl2
+  | i <= 0                = Empty
+  | otherwise             = (+++) jl1 $ takeJ (i-1) jl2
 
 size' :: (Sized m, Monoid m) => JoinList m a -> Int
 size' jl = getSize $ size (tag jl)
@@ -101,11 +101,12 @@ instance Buffer (JoinList (Score, Size) String) where
   replaceLine _ "" b = b
   replaceLine n l b  = case indexJ n b of
     Nothing -> b
-    Just _ -> takeJ n b +++ newline +++ dropJ (n + 1) b
+    Just _  -> takeJ n b +++ newline +++ dropJ (n + 1) b
       where
         newline = fromString l :: JoinList (Score, Size) String
 
   numLines = getSize . size . tag
   value    = getScore . fst . tag
 
+main :: IO ()
 main = runEditor editor (fromString "test" :: (JoinList (Score, Size) String))

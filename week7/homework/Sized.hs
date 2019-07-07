@@ -18,8 +18,8 @@ instance Sized Size where
 -- This instance means that things like
 --   (Foo, Size)
 --   (Foo, (Bar, Size))
---   ...
--- are all instances of Sized.
+--   ..
+-- are all instances of Sized
 instance Sized b => Sized (a, b) where
   size = size . snd
 
