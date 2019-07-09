@@ -2,10 +2,10 @@
 
 module JoinList where
 
-import Sized
-import Scrabble
-import Buffer
-import Editor
+import           Sized
+import           Scrabble
+import           Buffer
+import           Editor
 
 {--
 Append (Product 210)
@@ -26,18 +26,18 @@ data JoinList m a = Empty
 
 tag :: Monoid m => JoinList m a -> m
 tag Empty          = mempty
-tag (Single m _)   = m
+tag (Single m _  ) = m
 tag (Append m _ _) = m
 
 (!!?) :: [a] -> Int -> Maybe a
-[] !!? _ = Nothing
+[] !!? _        = Nothing
 _ !!? i | i < 0 = Nothing
-(x:_) !!? 0 = Just x
-(_:xs) !!? i = xs !!? (i-1)
+(x : _ ) !!? 0  = Just x
+(_ : xs) !!? i  = xs !!? (i - 1)
 
 jlToList :: JoinList m a -> [a]
-jlToList Empty = []
-jlToList (Single _ a) = [a]
+jlToList Empty            = []
+jlToList (Single _ a    ) = [a]
 jlToList (Append _ l1 l2) = jlToList l1 ++ jlToList l2
 
 -- Append (Size 4)
@@ -49,36 +49,30 @@ jlToList (Append _ l1 l2) = jlToList l1 ++ jlToList l2
 --      (Single (Size 1) 'h')))
 indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
 indexJ _ Empty = Nothing
-indexJ i (Single _ a)
-  | i == 0 = Just a
-  | otherwise = Nothing
-indexJ i (Append m jl1 jl2)
-  | i < 0 || i > getSize (size m) = Nothing
-  | i < size' jl1 = indexJ i jl1
-  | otherwise = indexJ (i-1) jl2
+indexJ i (Single _ a) | i == 0    = Just a
+                      | otherwise = Nothing
+indexJ i (Append m jl1 jl2) | i < 0 || i > getSize (size m) = Nothing
+                            | i < size' jl1                 = indexJ i jl1
+                            | otherwise                     = indexJ (i - 1) jl2
 
 dropJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
 dropJ 0 jl    = jl
 dropJ _ Empty = Empty
-dropJ i jl@(Single m _)
-  | i > getSize (size m) = jl
-  | otherwise            = Empty
-dropJ i jl@(Append m jl1 jl2)
-  | i > getSize (size m) = Empty
-  | i < 0                = jl
-  | i < size' jl1        =  (+++) jl1 jl2
-  | otherwise            = dropJ (i-1) jl2
+dropJ i jl@(Single m _) | i > getSize (size m) = jl
+                        | otherwise            = Empty
+dropJ i jl@(Append m jl1 jl2) | i > getSize (size m) = Empty
+                              | i < 0                = jl
+                              | i < size' jl1        = (+++) jl1 jl2
+                              | otherwise            = dropJ (i - 1) jl2
 
 takeJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
 takeJ 0 _     = Empty
 takeJ _ Empty = Empty
-takeJ i jl@(Single m _)
-  | i > getSize (size m) = jl
-  | otherwise            = Empty
-takeJ i jl@(Append m jl1 jl2)
-  | i >= getSize (size m) = jl
-  | i <= 0                = Empty
-  | otherwise             = (+++) jl1 $ takeJ (i-1) jl2
+takeJ i jl@(Single m _) | i > getSize (size m) = jl
+                        | otherwise            = Empty
+takeJ i jl@(Append m jl1 jl2) | i >= getSize (size m) = jl
+                              | i <= 0 = Empty
+                              | otherwise = (+++) jl1 $ takeJ (i - 1) jl2
 
 size' :: (Sized m, Monoid m) => JoinList m a -> Int
 size' jl = getSize $ size (tag jl)
@@ -93,17 +87,15 @@ instance Buffer (JoinList (Score, Size) String) where
   toString l = unlines (jlToList l)
 
   fromString xs = foldr1 (+++) $ createLine <$> lines xs
-    where
-      createLine s = Single (scoreString s, Size 1) s
+    where createLine s = Single (scoreString s, Size 1) s
 
   line = indexJ
 
   replaceLine _ "" b = b
-  replaceLine n l b  = case indexJ n b of
+  replaceLine n l  b = case indexJ n b of
     Nothing -> b
     Just _  -> takeJ n b +++ newline +++ dropJ (n + 1) b
-      where
-        newline = fromString l :: JoinList (Score, Size) String
+      where newline = fromString l :: JoinList (Score, Size) String
 
   numLines = getSize . size . tag
   value    = getScore . fst . tag
