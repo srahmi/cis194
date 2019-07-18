@@ -52,3 +52,6 @@ module Employee where
     
     instance Ord GuestList where
       compare (GL _ f1) (GL _ f2) = compare f1 f2
+    
+    instance Ord Employee where
+      compare (Emp _ f1) (Emp _ f2) = compare f1 f2
