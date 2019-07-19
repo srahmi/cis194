@@ -1,20 +1,20 @@
 module Employee where
 
     import           Data.Tree
-    
+
     -- Employee names are represented by Strings.
     type Name = String
-    
+
     -- The amount of fun an employee would have at the party, represented
     -- by an Integer
     type Fun  = Integer
 
     type Boss = Employee
-    
+
     -- An Employee consists of a name and a fun score.
     data Employee = Emp { empName :: Name, empFun :: Fun }
       deriving (Show, Read, Eq)
-    
+
     -- A small company hierarchy to use for testing purposes.
     testCompany :: Tree Employee
     testCompany
@@ -30,7 +30,7 @@ module Employee where
           [ Node (Emp "Sam" 4) []
           ]
         ]
-    
+
     testCompany2 :: Tree Employee
     testCompany2
       = Node (Emp "Stan" 9)
@@ -45,13 +45,13 @@ module Employee where
           [ Node (Emp "Sam" 4) [] -- (4, 0)
           ]
         ]
-    
+
     -- A type to store a list of guests and their total fun score.
     data GuestList = GL [Employee] Fun
       deriving (Show, Eq)
-    
+
     instance Ord GuestList where
       compare (GL _ f1) (GL _ f2) = compare f1 f2
-    
+
     instance Ord Employee where
-      compare (Emp _ f1) (Emp _ f2) = compare f1 f2
+      compare (Emp n1 _) (Emp n2 _) = compare n1 n2

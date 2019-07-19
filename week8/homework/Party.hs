@@ -28,7 +28,7 @@ module Party where
 
     testBoss = Emp "Boss" 6
 
-    empList = [Emp "Name" 1, Emp "Name2" 2]
+    empList = [Emp "Name" 1, Emp "Name2" 3, Emp "Name3" 2]
 
     --foldMap folds and apply mconcat
     nextLevel :: Employee -> [(GuestList, GuestList)] -> (GuestList, GuestList)
@@ -48,7 +48,7 @@ module Party where
     main = readFile "company.txt" >>= putStrLn . pretty . maxFun . read
 
     pretty :: GuestList -> String
-    pretty (GL xs f) = "Total Fun: " ++ show f 
+    pretty (GL xs f) = "Total Fun: " ++ show f ++ "\n" ++ unlines (sortedGl xs)
 
-    -- sortedGl :: [Employee] -> String
-    -- sortedGl gl = map (show empName) gl
+    sortedGl :: [Employee] -> [String]
+    sortedGl = map empName . sort
