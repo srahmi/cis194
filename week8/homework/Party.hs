@@ -21,13 +21,21 @@ module Party where
     treeFold f = fold' where
         fold' (Node x ts) = f x (map fold' ts)
 
+        -- f Node (Emp "Stan" 9) [f Node (Emp "Bob" 2) [ f Node (Emp "Joe" 5) [ f Node (Emp "John" 1) [] , f Node (Emp "Sue" 5) []], f Node (Emp "Fred" 3) []], f Node (Emp "Sarah" 17) [ f Node (Emp "Sam" 4) []]]
+        -- f Node (Emp "Stan" 9) [f Node (Emp "Bob" 2) [ f Node (Emp "Joe" 5) [(GL [Emp "John" 1] 1, GL [] 0), (GL [Emp "Sue" 5] 5, GL [] 0)], (GL [Emp "Fred" 3] 3, GL [] 0)], f Node (Emp "Sarah" 17) [(GL [Emp "Sam" 4] 4, GL [] 0)]]
+        -- f Node (Emp "Stan" 9) [f Node (Emp "Bob" 2) [ (GL [Emp "Joe" 5, Emp "John" 1, Emp "Sue" 5] 11, GL [Emp "Sue" 5] 5) , (GL [Emp "Fred" 3] 3, GL [] 0)], (GL [Emp "Sarah" 17, Emp "Sam" 4] 21, GL [Emp "Sam" 4] 4)]
+        -- f Node (Emp "Stan" 9) [(GL [Emp "Bob" 2, Emp "Fred" 3, Emp "Joe" 5, Emp "John" 1, Emp "Sue" 5] 16, GL [Emp "Sue" 5] 5), (GL [Emp "Sarah" 17, Emp "Sam" 4] 21, GL [Emp "Sam" 4] 4)]                                                                                          
+        -- (GL [Emp "Stan" 9, Emp "Bob" 2, Emp "Fred" 3, Emp "Joe" 5, Emp "John" 1, Emp "Sue" 5, Emp "Sarah" 17, Emp "Sam" 4] 46, GL [Emp "Sarah" 17, Emp "Sam" 4, Emp "Bob" 2, Emp "Fred" 3, Emp "Joe" 5, Emp "John" 1, Emp "Sue" 5] 37)
+    testGls :: [(GuestList, GuestList)]
     testGls = [
         (GL [Emp "Bob" 2] 2, GL [Emp "John" 4] 4),
         (GL [Emp "Said" 5, Emp "Oumaima" 7] 12, GL [Emp "Lara" 15, Emp "Hassan" 4] 19)
         ]
 
+    testBoss :: Employee
     testBoss = Emp "Boss" 6
 
+    empList :: [Employee]
     empList = [Emp "Name" 1, Emp "Name2" 3, Emp "Name3" 2]
 
     --foldMap folds and apply mconcat

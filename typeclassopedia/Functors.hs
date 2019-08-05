@@ -1,3 +1,4 @@
+{-# LANGUAGE ViewPatterns #-}
 module Functors where
 
     data Pair a = Pair a a
@@ -14,4 +15,7 @@ module Functors where
     instance Functor ITree where
         fmap g (Leaf h)  = Leaf (g . h)
         fmap g (Node xs) = Node (fmap g xs)
-        
+
+    instance Functor ((->) e) where
+        -- fmap :: (a -> b) -> (->) e a -> (->) e b === fmap :: (a -> b) -> (e -> a) -> (e -> b) === (.)
+        fmap g (e -> a) = (.)
