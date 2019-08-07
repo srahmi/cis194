@@ -1,12 +1,13 @@
 {- CIS 194 HW 10
    due Monday, 1 April
 -}
-
 module AParser where
 
     import           Control.Applicative()
     
     import           Data.Char
+
+    import           Control.Arrow
     
     -- A parser for a value of type a is a function which takes a String
     -- represnting the input to be parsed, and succeeds or fails; if it
@@ -58,8 +59,9 @@ module AParser where
     -- Your code goes below here
     ------------------------------------------------------------
 
-    first :: (a -> b) -> (a,c) -> (b,c)
-    first f (a, c) = (f a, c)
-
+    first' :: (a -> b) -> (a, c) -> (b, c)
+    first' f = mapFst f where
+                 mapFst g (a, b) = (g a, b)
+                 
     instance Functor Parser where
-        fmap g (Parser f) = Parser 
+        fmap f (Parser g) = Parser $ fmap (first' f) . g
