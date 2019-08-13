@@ -3,10 +3,19 @@
 -}
 module AParser where
 
+<<<<<<< HEAD
     import           Control.Applicative
 
     import           Data.Char
 
+=======
+    import           Control.Applicative()
+
+    import           Data.Char
+
+    import           Control.Arrow
+
+>>>>>>> a02a0aadcb6aa3345802871b79b586c27e756bb2
     -- A parser for a value of type a is a function which takes a String
     -- represnting the input to be parsed, and succeeds or fails; if it
     -- succeeds, it returns the parsed value along with the remainder of
@@ -60,10 +69,15 @@ module AParser where
     first' :: (a -> b) -> (a, c) -> (b, c)
     first' f (a, c) = (f a, c)
 
+<<<<<<< HEAD
+=======
+    -- g = runParser :: String -> Maybe (a, String)
+>>>>>>> a02a0aadcb6aa3345802871b79b586c27e756bb2
     instance Functor Parser where
       fmap f (Parser g) = Parser (fmap (first' f) . g)
 
     instance Applicative Parser where
+<<<<<<< HEAD
      pure a = Parser f
         where f s = Just(a, s)
 
@@ -87,3 +101,12 @@ module AParser where
 
     parseEmployee :: Name -> String -> Parser Employee
     parseEmployee n p =  Emp <$> parseName n <*> parsePhone p
+=======
+      pure a    = Parser f where
+                    f s = Just(a, s)
+
+      p1 <*> p2 = 
+
+
+
+>>>>>>> a02a0aadcb6aa3345802871b79b586c27e756bb2
