@@ -3,7 +3,9 @@
 -}
 module AParser where
 
-    import           Control.Applicative()
+    import           Control.Applicative
+
+    import           Data.Functor(void)
 
     import           Data.Char
 
@@ -12,6 +14,7 @@ module AParser where
     -- succeeds, it returns the parsed value along with the remainder of
     -- the input.
     newtype Parser a = Parser { runParser :: String -> Maybe (a, String) }
+
 
     -- For example, 'satisfy' takes a predicate on Char, and constructs a
     -- parser which succeeds only if it sees a Char that satisfies the
@@ -76,6 +79,12 @@ module AParser where
     --                                       Nothing      -> Nothing
     --                                       Just(f', s') -> first' f' <$> g s')
 
+    instance Alternative Parser where
+      empty     = Parser f
+        where f _ = Nothing
+      p1 <|> p2 = Parser f
+        where f s = runParser p1 s <|> runParser p2 s
+
     type Name = String
     data Employee = Emp { name :: Name, phone :: String } deriving (Show)
 
@@ -87,3 +96,16 @@ module AParser where
 
     parseEmployee :: Name -> String -> Parser Employee
     parseEmployee n p =  Emp <$> parseName n <*> parsePhone p
+
+    abParser :: Parser (Char, Char)
+    abParser = (,) <$> satisfy (== 'a') <*> satisfy (== 'b')
+
+    abParser_ :: Parser ()
+    abParser_ = void $ (,) <$> satisfy (== 'a') <*> satisfy (== 'b')
+
+    intPair :: Parser [Integer]
+    intPair = (\a _ b -> [a, b]) <$> posInt <*> char ' ' <*> posInt
+
+    intOrUppercase :: Parser ()
+    intOrUppercase =  () <$ posInt <|> () <$ satisfy isUpper
+
