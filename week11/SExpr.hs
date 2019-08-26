@@ -16,7 +16,7 @@ zeroOrMore :: Parser a -> Parser [a]
 zeroOrMore = many
 
 oneOrMore :: Parser a -> Parser [a]
-oneOrMore p = undefined
+oneOrMore = some
 
 ------------------------------------------------------------
 --  2. Utilities
