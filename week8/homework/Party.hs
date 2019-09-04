@@ -38,6 +38,7 @@ module Party where
     empList :: [Employee]
     empList = [Emp "Name" 1, Emp "Name2" 3, Emp "Name3" 2]
 
+
     --foldMap folds and apply mconcat
     nextLevel :: Employee -> [(GuestList, GuestList)] -> (GuestList, GuestList)
     nextLevel boss gls = (withBoss, withoutBoss) where
